@@ -2,8 +2,17 @@
 
 GraphDB is an in memory database with sync capabilities that lets you handle data the way you want with a bare minimum setup.
 
+[![CircleCI](https://circleci.com/gh/alexvcasillas/graphdb.svg?style=svg)](https://circleci.com/gh/alexvcasillas/graphdb)
+[![Codecoverage](https://img.shields.io/badge/coverage-94.23%25-green)](https://img.shields.io/badge/coverage-94.23%25-green)
+
+[![BundleSize](https://img.shields.io/bundlephobia/minzip/@alexvcasillas/graphdb)](https://img.shields.io/bundlephobia/minzip/@alexvcasillas/graphdb)
+[![Downloads](https://img.shields.io/npm/dw/@alexvcasillas/graphdb)](https://img.shields.io/npm/dw/@alexvcasillas/graphdb)
+
+[![Version](https://img.shields.io/npm/v/@alexvcasillas/graphdb)](https://img.shields.io/npm/v/@alexvcasillas/graphdb)[![License](https://img.shields.io/npm/l/@alexvcasillas/graphdb)](https://img.shields.io/npm/l/@alexvcasillas/graphdb)
+
 - [Quick start](#quick-start)
 - [Initialization](#initialization)
+- [API and Types](#api-and-types)
 - [Create a collection](#create-a-collection)
 - [Get a collection](#get-a-collection)
 - [Create a document](#create-a-document)
@@ -29,6 +38,63 @@ npm i -s @alexvcasillas/graphdb
 import { GraphDB } from '@alexvcasillas/graphdb';
 
 const graphdb = GraphDB();
+```
+
+# API and Types
+
+```typescript
+type GraphDBType = {
+  createCollection: <T>(
+    collectionId: string,
+    syncers?: GraphDocumentSyncers<T>
+  ) => void;
+  getCollection: <T>(collectionId: string) => Collection<T> | null;
+};
+
+// Still not implemented!
+type Query = {};
+// Still not implemented!
+type Where = {};
+
+type Collection<T> = {
+  read: (documentId: string) => GraphDocument<T>;
+  create: (document: T) => Promise<string>;
+  update: (documentId: string, patch: Partial<T>) => Promise<GraphDocument<T>>;
+  remove: (documentId: string) => Promise<RemoveOperationFeedback>;
+  listen: (
+    documentId: string,
+    listener: ListenerFn<GraphDocument<T>>
+  ) => CancelListenerFn;
+};
+
+type GraphDocument<T> = {
+  _id: string;
+  createdAt: Date;
+  updateAt: Date;
+} & T;
+
+type ListenerFn<T> = (document: T) => void;
+
+type GraphDocumentListener<T> = {
+  id: string;
+  document: string;
+  fn: ListenerFn<GraphDocument<T>>;
+};
+
+type GraphDocumentListeners<T> = GraphDocumentListener<T>[];
+
+type CancelListenerFn = () => void;
+
+type GraphDocumentSyncers<T> = {
+  create?: (document: GraphDocument<T>) => Promise<boolean>;
+  update?: (document: GraphDocument<T>) => Promise<boolean>;
+  remove?: (documentId: string) => Promise<boolean>;
+};
+
+type RemoveOperationFeedback = {
+  removedId: string;
+  acknowledge: true;
+};
 ```
 
 # Create a collection
@@ -90,7 +156,7 @@ const insertedId = await userCollection.create({
   age: 29,
 });
 
-const userDocument = userCollection?.read(insertedId as string);
+const userDocument = userCollection.read(insertedId as string);
 ```
 
 # Update a document
@@ -179,7 +245,7 @@ interface UserModel {
 }
 
 graphdb.createCollection<UserModel>('user', {
-  async create(document: GraphDocument<T>) {
+  create(document: GraphDocument<T>) {
     return new Promise((resolve, reject) => {
       // Send data to your backend!
       const backendResponse = await backend.create(document);
@@ -189,7 +255,7 @@ graphdb.createCollection<UserModel>('user', {
       if (backendResponse.status === 500) return reject(false);
     });
   };
-  async update(document: GraphDocument<T>) {
+  update(document: GraphDocument<T>) {
     return new Promise((resolve, reject) => {
       // Send data to your backend!
       const backendResponse = await backend.update(document);
@@ -199,7 +265,7 @@ graphdb.createCollection<UserModel>('user', {
       if (backendResponse.status === 500) return reject(false);
     });
   };
-  async remove(documentId: string) {
+  remove(documentId: string) {
     return new Promise((resolve, reject) => {
       // Send data to your backend!
       const backendResponse = await backend.remove(document);

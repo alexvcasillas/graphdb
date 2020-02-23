@@ -6,11 +6,12 @@ import {
   GraphDocumentListener,
   RemoveOperationFeedback,
   ListenerFn,
+  CancelListenerFn,
 } from './types';
 
 export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
   const documents = new Map<string, GraphDocument<T>>();
-  const listeners: GraphDocumentListeners<T> = [];
+  let listeners: GraphDocumentListeners<T> = [];
 
   const read = (documentId: string): GraphDocument<T> | null => {
     return documents.get(documentId) || null;
@@ -28,15 +29,21 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
         ...document,
       });
       if (syncers?.create) {
-        const syncResult = await syncers?.create({
-          _id,
-          createdAt: createTimestamp,
-          updateAt: updateTimestamp,
-          ...document,
-        });
+        let syncResult;
+        try {
+          syncResult = await syncers?.create({
+            _id,
+            createdAt: createTimestamp,
+            updateAt: updateTimestamp,
+            ...document,
+          });
+        } catch (syncError) {
+          // Do nothing here
+        }
         if (syncResult) {
           return resolve(_id);
         }
+        documents.delete(_id);
         return reject(new Error(`Document synchronization wasn't possible.`));
       }
       return resolve(_id);
@@ -75,16 +82,18 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
       documents.set(documentId, updatedDocument);
 
       if (syncers?.update) {
-        const syncResult = await syncers?.update(updatedDocument);
+        let syncResult;
+        try {
+          syncResult = await syncers?.update(updatedDocument);
+        } catch (syncError) {
+          // Do nothing here
+        }
         if (!syncResult) {
-          if (__DEV__) {
-            console.log(
-              '[UPDATE SYNC]: Document synchronization not possible. Reverting the patch.'
-            );
-          }
           documents.set(documentId, document);
           return reject(
-            new Error(`[UDATE SYNC]: Document synchronization wasn't possible.`)
+            new Error(
+              `[UPDATE SYNC]: Document synchronization wasn't possible.`
+            )
           );
         }
       }
@@ -120,46 +129,44 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
         );
       }
 
-      const deleteOk = documents.delete(documentId);
+      documents.delete(documentId);
 
-      if (deleteOk) {
-        if (syncers?.remove) {
-          const syncResult = await syncers.remove(documentId);
-          if (!syncResult) {
-            if (__DEV__) {
-              console.log(
-                '[UPDATE SYNC]: Document synchronization not possible. Reverting the patch.'
-              );
-            }
-            documents.set(documentId, document);
-            return reject(
-              new Error(
-                `[UDATE SYNC]: Document synchronization wasn't possible.`
-              )
-            );
-          }
+      if (syncers?.remove) {
+        let syncResult;
+        try {
+          syncResult = await syncers.remove(documentId);
+        } catch (syncError) {
+          // Do nothing here
         }
-        return resolve({
-          removedId: documentId,
-          acknowledge: true,
-        });
-      } else {
-        return reject(
-          new Error(`Couldn't delete the GraphDocument with ID ${documentId} `)
-        );
+        if (!syncResult) {
+          documents.set(documentId, document);
+          return reject(
+            new Error(
+              `[REMOVE SYNC]: Document synchronization wasn't possible.`
+            )
+          );
+        }
       }
+      return resolve({
+        removedId: documentId,
+        acknowledge: true,
+      });
     });
   };
 
   const listen = (
     documentId: string,
     listener: ListenerFn<GraphDocument<T>>
-  ) => {
+  ): CancelListenerFn => {
+    const listenerId = uuid();
     listeners.push({
-      id: uuid(),
+      id: listenerId,
       document: documentId,
       fn: listener,
     });
+    return () => {
+      listeners = listeners.filter(listener => listener.id !== listenerId);
+    };
   };
 
   return {
@@ -168,8 +175,5 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
     update,
     remove,
     listen,
-    __dev: {
-      documents,
-    },
   };
 }

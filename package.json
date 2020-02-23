@@ -43,5 +43,10 @@
   },
   "dependencies": {
     "uuid": "^3.4.0"
+  },
+  "jest": {
+    "globals": {
+      "__DEV__": false
+    }
   }
 }

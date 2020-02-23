@@ -14,10 +14,10 @@ export type Collection<T> = {
   create: (document: T) => Promise<string>;
   update: (documentId: string, patch: Partial<T>) => Promise<GraphDocument<T>>;
   remove: (documentId: string) => Promise<RemoveOperationFeedback>;
-  listen: (documentId: string, listener: ListenerFn<GraphDocument<T>>) => void;
-  __dev: {
-    documents: Map<string, T>;
-  };
+  listen: (
+    documentId: string,
+    listener: ListenerFn<GraphDocument<T>>
+  ) => CancelListenerFn;
 };
 
 export type GraphDocument<T> = {
@@ -35,6 +35,8 @@ export type GraphDocumentListener<T> = {
 };
 
 export type GraphDocumentListeners<T> = GraphDocumentListener<T>[];
+
+export type CancelListenerFn = () => void;
 
 export type GraphDocumentSyncers<T> = {
   create?: (document: GraphDocument<T>) => Promise<boolean>;

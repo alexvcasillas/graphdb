@@ -221,12 +221,15 @@ const insertedId = await userCollection.create({
   age: 29,
 });
 
-userCollection.listen(
+const stopLister = userCollection.listen(
   insertedId as string,
   (document: GraphDocument<UserModel>) => {
     // Handle document updates here
   }
 );
+
+// Call this whenever you want to stop lintening to changes
+stopLister();
 ```
 
 # Syncers

@@ -475,4 +475,181 @@ describe('core behaviour', () => {
       );
     }
   });
+  it('should query a collection base on a single where clause', async () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+    const alexInsertedId = await userCollection?.create({
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+    });
+    await userCollection?.create({
+      name: 'Daniel',
+      lastName: 'Casillas',
+      age: 22,
+    });
+    await userCollection?.create({
+      name: 'Antonio',
+      lastName: 'Cobos',
+      age: 34,
+    });
+    await userCollection?.create({
+      name: 'John',
+      lastName: 'Snow',
+      age: 19,
+    });
+    await userCollection?.create({
+      name: 'John',
+      lastName: 'Doe',
+      age: 40,
+    });
+    await userCollection?.create({
+      name: 'Jane',
+      lastName: 'Doe',
+      age: 50,
+    });
+    const queryResult = userCollection?.query({ name: 'Alex' });
+    expect(queryResult).toEqual(
+      expect.objectContaining({
+        _id: alexInsertedId,
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+      })
+    );
+  });
+  it('should query a collection based on a complex where clause', async () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+    const alexInsertedId = await userCollection?.create({
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+    });
+    await userCollection?.create({
+      name: 'Daniel',
+      lastName: 'Casillas',
+      age: 22,
+    });
+    await userCollection?.create({
+      name: 'Antonio',
+      lastName: 'Cobos',
+      age: 34,
+    });
+    await userCollection?.create({
+      name: 'John',
+      lastName: 'Snow',
+      age: 19,
+    });
+    await userCollection?.create({
+      name: 'John',
+      lastName: 'Doe',
+      age: 40,
+    });
+    await userCollection?.create({
+      name: 'Jane',
+      lastName: 'Doe',
+      age: 50,
+    });
+    const queryResult = userCollection?.query({ name: 'Alex', age: 29 });
+    expect(queryResult).toEqual(
+      expect.objectContaining({
+        _id: alexInsertedId,
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+      })
+    );
+  });
+  it('should query a collection based on a complex where clause that returns an array of matches', async () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+    await userCollection?.create({
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+    });
+    await userCollection?.create({
+      name: 'Daniel',
+      lastName: 'Casillas',
+      age: 22,
+    });
+    await userCollection?.create({
+      name: 'Antonio',
+      lastName: 'Cobos',
+      age: 34,
+    });
+    await userCollection?.create({
+      name: 'John',
+      lastName: 'Snow',
+      age: 19,
+    });
+    await userCollection?.create({
+      name: 'John',
+      lastName: 'Doe',
+      age: 40,
+    });
+    await userCollection?.create({
+      name: 'Jane',
+      lastName: 'Doe',
+      age: 50,
+    });
+    const queryResult = userCollection?.query({ lastName: 'Doe' });
+    expect(Array.isArray(queryResult)).toBe(true);
+    expect((queryResult as GraphDocument<UserModel>[]).length).toBe(2);
+    expect((queryResult as GraphDocument<UserModel>[])[0]).toEqual(
+      expect.objectContaining({
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+      })
+    );
+    expect((queryResult as GraphDocument<UserModel>[])[1]).toEqual(
+      expect.objectContaining({
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+      })
+    );
+  });
+  it('should query a collection based on a where clause that wont match any document', async () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+    await userCollection?.create({
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+    });
+    await userCollection?.create({
+      name: 'Daniel',
+      lastName: 'Casillas',
+      age: 22,
+    });
+    await userCollection?.create({
+      name: 'Antonio',
+      lastName: 'Cobos',
+      age: 34,
+    });
+    await userCollection?.create({
+      name: 'John',
+      lastName: 'Snow',
+      age: 19,
+    });
+    await userCollection?.create({
+      name: 'John',
+      lastName: 'Doe',
+      age: 40,
+    });
+    await userCollection?.create({
+      name: 'Jane',
+      lastName: 'Doe',
+      age: 50,
+    });
+    const queryResult = userCollection?.query({ age: 99 });
+    expect(queryResult).toBe(null);
+  });
 });

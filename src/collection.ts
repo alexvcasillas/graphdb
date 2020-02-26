@@ -7,6 +7,7 @@ import {
   RemoveOperationFeedback,
   ListenerFn,
   CancelListenerFn,
+  Where,
 } from './types';
 
 export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
@@ -15,6 +16,25 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
 
   const read = (documentId: string): GraphDocument<T> | null => {
     return documents.get(documentId) || null;
+  };
+
+  const query = (
+    where: Where
+  ): GraphDocument<T> | GraphDocument<T>[] | null => {
+    const queriedDocuments: GraphDocument<T>[] = [];
+    documents.forEach((document: GraphDocument<T>) => {
+      let allKeysMatch = true;
+      for (let [key, value] of Object.entries(where)) {
+        // @ts-ignore
+        if (document[key] !== value) {
+          allKeysMatch = false;
+        }
+      }
+      if (allKeysMatch) queriedDocuments.push(document);
+    });
+    if (queriedDocuments.length === 0) return null;
+    if (queriedDocuments.length === 1) return queriedDocuments[0];
+    return queriedDocuments;
   };
 
   const create = (document: T): Promise<string> => {
@@ -171,6 +191,7 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
 
   return {
     read,
+    query,
     create,
     update,
     remove,

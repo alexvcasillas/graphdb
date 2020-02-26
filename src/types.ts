@@ -6,11 +6,13 @@ export type GraphDBType = {
   getCollection: <T>(collectionId: string) => Collection<T> | null;
 };
 
-export type Query = {};
-export type Where = {};
+export type Where = {
+  [property: string]: any;
+};
 
 export type Collection<T> = {
   read: (documentId: string) => GraphDocument<T>;
+  query: (where: Where) => GraphDocument<T> | GraphDocument<T>[] | null;
   create: (document: T) => Promise<string>;
   update: (documentId: string, patch: Partial<T>) => Promise<GraphDocument<T>>;
   remove: (documentId: string) => Promise<RemoveOperationFeedback>;

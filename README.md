@@ -159,6 +159,26 @@ const insertedId = await userCollection.create({
 const userDocument = userCollection.read(insertedId as string);
 ```
 
+# Query documents
+
+```typescript
+interface UserModel {
+  name: string;
+  lastName: string;
+  age: string;
+}
+
+const userCollection = graphdb.getCollection<UserModel>('user');
+
+await userCollection.create({
+  name: 'Alex',
+  lastName: 'Casillas',
+  age: 29,
+});
+
+userCollection.query({ name: 'Alex', age: 29 });
+```
+
 # Update a document
 
 ```typescript
@@ -221,7 +241,7 @@ const insertedId = await userCollection.create({
   age: 29,
 });
 
-const stopLister = userCollection.listen(
+const stopListen = userCollection.listen(
   insertedId as string,
   (document: GraphDocument<UserModel>) => {
     // Handle document updates here
@@ -229,7 +249,7 @@ const stopLister = userCollection.listen(
 );
 
 // Call this whenever you want to stop lintening to changes
-stopLister();
+stopListen();
 ```
 
 # Syncers

@@ -15,6 +15,7 @@ GraphDB is an in memory database with sync capabilities that lets you handle dat
 - [API and Types](#api-and-types)
 - [Create a collection](#create-a-collection)
 - [Get a collection](#get-a-collection)
+- [Populate a collection](#populate-a-collection)
 - [Create a document](#create-a-document)
 - [Read a document](#read-a-document)
 - [Update a document](#update-a-document)
@@ -119,6 +120,69 @@ interface UserModel {
 }
 
 const userCollection = graphdb.getCollection<UserModel>('user');
+```
+
+# Populate a collection
+
+```typescript
+interface UserModel {
+  name: string;
+  lastName: string;
+  age: string;
+}
+
+const userCollection = graphdb.getCollection<UserModel>('user');
+
+userCollection.populate([
+  {
+    _id: '1',
+    name: 'Alex',
+    lastName: 'Casillas',
+    age: 29,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '2',
+    name: 'Alex',
+    lastName: 'Casillas',
+    age: 29,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '3',
+    name: 'Alex',
+    lastName: 'Casillas',
+    age: 29,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '4',
+    name: 'Alex',
+    lastName: 'Casillas',
+    age: 29,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '5',
+    name: 'Alex',
+    lastName: 'Casillas',
+    age: 29,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '6',
+    name: 'Alex',
+    lastName: 'Casillas',
+    age: 29,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+]);
 ```
 
 # Create a document

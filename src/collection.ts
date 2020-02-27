@@ -174,6 +174,13 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
     });
   };
 
+  const populate = (population: GraphDocument<T>[]) => {
+    const amountOfDocuments = population.length - 1;
+    for (let i = 0; i <= amountOfDocuments; i++) {
+      documents.set(population[i]._id, population[i]);
+    }
+  };
+
   const listen = (
     documentId: string,
     listener: ListenerFn<GraphDocument<T>>
@@ -195,6 +202,7 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
     create,
     update,
     remove,
+    populate,
     listen,
   };
 }

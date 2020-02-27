@@ -51,13 +51,13 @@ type GraphDBType = {
   getCollection: <T>(collectionId: string) => Collection<T> | null;
 };
 
-// Still not implemented!
-type Query = {};
-// Still not implemented!
-type Where = {};
+type Where = {
+  [property: string]: any;
+};
 
 type Collection<T> = {
   read: (documentId: string) => GraphDocument<T>;
+  query: (where: Where) => GraphDocument<T> | GraphDocument<T>[] | null;
   create: (document: T) => Promise<string>;
   update: (documentId: string, patch: Partial<T>) => Promise<GraphDocument<T>>;
   remove: (documentId: string) => Promise<RemoveOperationFeedback>;

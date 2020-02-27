@@ -16,6 +16,7 @@ export type Collection<T> = {
   create: (document: T) => Promise<string>;
   update: (documentId: string, patch: Partial<T>) => Promise<GraphDocument<T>>;
   remove: (documentId: string) => Promise<RemoveOperationFeedback>;
+  populate: (population: GraphDocument<T>[]) => void;
   listen: (
     documentId: string,
     listener: ListenerFn<GraphDocument<T>>

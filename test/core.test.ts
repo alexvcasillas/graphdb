@@ -652,4 +652,64 @@ describe('core behaviour', () => {
     const queryResult = userCollection?.query({ age: 99 });
     expect(queryResult).toBe(null);
   });
+  it('should populate a document collection with the given documents', () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
+    const queryResult = userCollection?.query({
+      name: 'Alex',
+      lastName: 'Casillas',
+    });
+    expect((queryResult as GraphDocument<UserModel>[]).length).toBe(6);
+  });
 });

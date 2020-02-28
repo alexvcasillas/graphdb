@@ -3,7 +3,7 @@
 GraphDB is an in memory database with sync capabilities that lets you handle data the way you want with a bare minimum setup.
 
 [![CircleCI](https://circleci.com/gh/alexvcasillas/graphdb.svg?style=svg)](https://circleci.com/gh/alexvcasillas/graphdb)
-[![Codecoverage](https://img.shields.io/badge/coverage-95%25-green)](https://img.shields.io/badge/coverage-94.23%25-green)
+[![Codecoverage](https://img.shields.io/badge/coverage-94.4%25-green)](https://img.shields.io/badge/coverage-94.4%25-green)
 
 [![BundleSize](https://img.shields.io/bundlephobia/minzip/@alexvcasillas/graphdb)](https://img.shields.io/bundlephobia/minzip/@alexvcasillas/graphdb)
 [![Downloads](https://img.shields.io/npm/dw/@alexvcasillas/graphdb)](https://img.shields.io/npm/dw/@alexvcasillas/graphdb)
@@ -18,6 +18,8 @@ GraphDB is an in memory database with sync capabilities that lets you handle dat
 - [Populate a collection](#populate-a-collection)
 - [Create a document](#create-a-document)
 - [Read a document](#read-a-document)
+- [Query documents](#query-documents)
+- [Query documents with complex where clause](#query-documents-with-complex-where-clause)
 - [Update a document](#update-a-document)
 - [Remove a document](#remove-a-document)
 - [Listen to changes](#listen-to-changes)
@@ -241,6 +243,97 @@ await userCollection.create({
 });
 
 userCollection.query({ name: 'Alex', age: 29 });
+```
+
+# Query documents with complex where clause
+
+Complex operators include for now:
+
+- `gt`: greater than
+- `gte`: greater than or equals
+- `lt`: lower than
+- `lte`: lower than or equals
+
+This operators can be combine to form complex where clauses like the following:
+
+```
+{ age: { gt: 20, lt: 40 } }
+```
+
+```typescript
+interface UserModel {
+  name: string;
+  lastName: string;
+  age: string;
+}
+
+const userCollection = graphdb.getCollection<UserModel>('user');
+
+userCollection?.populate([
+  {
+    _id: '1',
+    name: 'Alex',
+    lastName: 'Casillas',
+    age: 29,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '2',
+    name: 'Daniel',
+    lastName: 'Casillas',
+    age: 22,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '3',
+    name: 'Antonio',
+    lastName: 'Cobos',
+    age: 34,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '4',
+    name: 'John',
+    lastName: 'Snow',
+    age: 19,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '5',
+    name: 'John',
+    lastName: 'Doe',
+    age: 40,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '6',
+    name: 'Jane',
+    lastName: 'Doe',
+    age: 50,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+]);
+
+const queryResult = userCollection?.query({
+  age: { gt: 30 },
+});
+
+// queryResult.length === 3
+
+// queryResult[0]
+// { _id: '3', name: 'Antonio', lastName: 'Cobos', age: 34 }
+
+// queryResult[1]
+// { _id: '5', name: 'John', lastName: 'Doe', age: 40 }
+
+// queryResult[2]
+// { _id: '6', name: 'Jane', lastName: 'Doe', age: 50 }
 ```
 
 # Update a document

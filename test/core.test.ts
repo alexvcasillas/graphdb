@@ -479,40 +479,59 @@ describe('core behaviour', () => {
     const graphdb = GraphDB();
     graphdb.createCollection<UserModel>('user');
     const userCollection = graphdb.getCollection<UserModel>('user');
-    const alexInsertedId = await userCollection?.create({
-      name: 'Alex',
-      lastName: 'Casillas',
-      age: 29,
-    });
-    await userCollection?.create({
-      name: 'Daniel',
-      lastName: 'Casillas',
-      age: 22,
-    });
-    await userCollection?.create({
-      name: 'Antonio',
-      lastName: 'Cobos',
-      age: 34,
-    });
-    await userCollection?.create({
-      name: 'John',
-      lastName: 'Snow',
-      age: 19,
-    });
-    await userCollection?.create({
-      name: 'John',
-      lastName: 'Doe',
-      age: 40,
-    });
-    await userCollection?.create({
-      name: 'Jane',
-      lastName: 'Doe',
-      age: 50,
-    });
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
     const queryResult = userCollection?.query({ name: 'Alex' });
     expect(queryResult).toEqual(
       expect.objectContaining({
-        _id: alexInsertedId,
         name: 'Alex',
         lastName: 'Casillas',
         age: 29,
@@ -523,40 +542,59 @@ describe('core behaviour', () => {
     const graphdb = GraphDB();
     graphdb.createCollection<UserModel>('user');
     const userCollection = graphdb.getCollection<UserModel>('user');
-    const alexInsertedId = await userCollection?.create({
-      name: 'Alex',
-      lastName: 'Casillas',
-      age: 29,
-    });
-    await userCollection?.create({
-      name: 'Daniel',
-      lastName: 'Casillas',
-      age: 22,
-    });
-    await userCollection?.create({
-      name: 'Antonio',
-      lastName: 'Cobos',
-      age: 34,
-    });
-    await userCollection?.create({
-      name: 'John',
-      lastName: 'Snow',
-      age: 19,
-    });
-    await userCollection?.create({
-      name: 'John',
-      lastName: 'Doe',
-      age: 40,
-    });
-    await userCollection?.create({
-      name: 'Jane',
-      lastName: 'Doe',
-      age: 50,
-    });
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
     const queryResult = userCollection?.query({ name: 'Alex', age: 29 });
     expect(queryResult).toEqual(
       expect.objectContaining({
-        _id: alexInsertedId,
         name: 'Alex',
         lastName: 'Casillas',
         age: 29,
@@ -567,36 +605,56 @@ describe('core behaviour', () => {
     const graphdb = GraphDB();
     graphdb.createCollection<UserModel>('user');
     const userCollection = graphdb.getCollection<UserModel>('user');
-    await userCollection?.create({
-      name: 'Alex',
-      lastName: 'Casillas',
-      age: 29,
-    });
-    await userCollection?.create({
-      name: 'Daniel',
-      lastName: 'Casillas',
-      age: 22,
-    });
-    await userCollection?.create({
-      name: 'Antonio',
-      lastName: 'Cobos',
-      age: 34,
-    });
-    await userCollection?.create({
-      name: 'John',
-      lastName: 'Snow',
-      age: 19,
-    });
-    await userCollection?.create({
-      name: 'John',
-      lastName: 'Doe',
-      age: 40,
-    });
-    await userCollection?.create({
-      name: 'Jane',
-      lastName: 'Doe',
-      age: 50,
-    });
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
     const queryResult = userCollection?.query({ lastName: 'Doe' });
     expect(Array.isArray(queryResult)).toBe(true);
     expect((queryResult as GraphDocument<UserModel>[]).length).toBe(2);
@@ -619,36 +677,56 @@ describe('core behaviour', () => {
     const graphdb = GraphDB();
     graphdb.createCollection<UserModel>('user');
     const userCollection = graphdb.getCollection<UserModel>('user');
-    await userCollection?.create({
-      name: 'Alex',
-      lastName: 'Casillas',
-      age: 29,
-    });
-    await userCollection?.create({
-      name: 'Daniel',
-      lastName: 'Casillas',
-      age: 22,
-    });
-    await userCollection?.create({
-      name: 'Antonio',
-      lastName: 'Cobos',
-      age: 34,
-    });
-    await userCollection?.create({
-      name: 'John',
-      lastName: 'Snow',
-      age: 19,
-    });
-    await userCollection?.create({
-      name: 'John',
-      lastName: 'Doe',
-      age: 40,
-    });
-    await userCollection?.create({
-      name: 'Jane',
-      lastName: 'Doe',
-      age: 50,
-    });
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
     const queryResult = userCollection?.query({ age: 99 });
     expect(queryResult).toBe(null);
   });
@@ -667,41 +745,41 @@ describe('core behaviour', () => {
       },
       {
         _id: '2',
-        name: 'Alex',
+        name: 'Daniel',
         lastName: 'Casillas',
-        age: 29,
+        age: 22,
         createdAt: new Date(),
         updateAt: new Date(),
       },
       {
         _id: '3',
-        name: 'Alex',
-        lastName: 'Casillas',
-        age: 29,
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
         createdAt: new Date(),
         updateAt: new Date(),
       },
       {
         _id: '4',
-        name: 'Alex',
-        lastName: 'Casillas',
-        age: 29,
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
         createdAt: new Date(),
         updateAt: new Date(),
       },
       {
         _id: '5',
-        name: 'Alex',
-        lastName: 'Casillas',
-        age: 29,
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
         createdAt: new Date(),
         updateAt: new Date(),
       },
       {
         _id: '6',
-        name: 'Alex',
-        lastName: 'Casillas',
-        age: 29,
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
         createdAt: new Date(),
         updateAt: new Date(),
       },
@@ -710,6 +788,378 @@ describe('core behaviour', () => {
       name: 'Alex',
       lastName: 'Casillas',
     });
-    expect((queryResult as GraphDocument<UserModel>[]).length).toBe(6);
+    expect(queryResult as GraphDocument<UserModel>).toEqual(
+      expect.objectContaining({
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+      })
+    );
+  });
+  it('should perform a query with a complex where clause', () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
+    const queryResult = userCollection?.query({
+      age: { gt: 30 },
+    }) as GraphDocument<UserModel>[];
+    expect(queryResult.length).toBe(3);
+    expect(queryResult[0]).toEqual(
+      expect.objectContaining({
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+      })
+    );
+    expect(queryResult[1]).toEqual(
+      expect.objectContaining({
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+      })
+    );
+    expect(queryResult[2]).toEqual(
+      expect.objectContaining({
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+      })
+    );
+  });
+  it('should perform a query with a complex where clause (1/4)', () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
+    const queryResult = userCollection?.query({
+      age: { gt: 30 },
+    }) as GraphDocument<UserModel>[];
+    expect(queryResult.length).toBe(3);
+    expect(queryResult[0]).toEqual(
+      expect.objectContaining({
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+      })
+    );
+    expect(queryResult[1]).toEqual(
+      expect.objectContaining({
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+      })
+    );
+    expect(queryResult[2]).toEqual(
+      expect.objectContaining({
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+      })
+    );
+  });
+  it('should perform a query with a complex where clause (2/4)', () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
+    const queryResult = userCollection?.query({
+      age: { gt: 30, lte: 40 },
+    }) as GraphDocument<UserModel>[];
+    expect(queryResult.length).toBe(2);
+    expect(queryResult[0]).toEqual(
+      expect.objectContaining({
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+      })
+    );
+    expect(queryResult[1]).toEqual(
+      expect.objectContaining({
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+      })
+    );
+  });
+  it('should perform a query with a complex where clause (3/4)', () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
+    const queryResult = userCollection?.query({
+      age: { gt: 60 },
+    });
+    expect(!!queryResult).toBe(false);
+  });
+  it('should perform a query with a complex where clause (4/4)', () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
+    const queryResult = userCollection?.query({
+      age: { gt: 20 },
+      lastName: 'Casillas',
+    }) as GraphDocument<UserModel>[];
+    expect(queryResult.length).toBe(2);
+    expect(queryResult[0]).toEqual(
+      expect.objectContaining({
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+      })
+    );
+    expect(queryResult[1]).toEqual(
+      expect.objectContaining({
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+      })
+    );
   });
 });

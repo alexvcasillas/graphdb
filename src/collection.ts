@@ -9,6 +9,7 @@ import {
   CancelListenerFn,
   Where,
 } from './types';
+import { whereChecker } from './utils/where-checker';
 
 export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
   const documents = new Map<string, GraphDocument<T>>();
@@ -25,10 +26,7 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
     documents.forEach((document: GraphDocument<T>) => {
       let allKeysMatch = true;
       for (let [key, value] of Object.entries(where)) {
-        // @ts-ignore
-        if (document[key] !== value) {
-          allKeysMatch = false;
-        }
+        if (!whereChecker<T>(key, value, document)) allKeysMatch = false;
       }
       if (allKeysMatch) queriedDocuments.push(document);
     });

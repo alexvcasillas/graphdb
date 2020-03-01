@@ -21,6 +21,10 @@ export type Collection<T> = {
     documentId: string,
     listener: ListenerFn<GraphDocument<T>>
   ) => CancelListenerFn;
+  on: (
+    type: 'create' | 'update' | 'remove' | 'populate',
+    listener: ListenerFn<GraphDocument<T>>
+  ) => CancelListenerFn;
 };
 
 export type GraphDocument<T> = {
@@ -29,7 +33,8 @@ export type GraphDocument<T> = {
   updateAt: Date;
 } & T;
 
-export type ListenerFn<T> = (document: T) => void;
+export type ListenerFn<T> = (document: GraphDocument<T>) => void;
+export type ListenerOnFn = () => void;
 
 export type GraphDocumentListener<T> = {
   id: string;
@@ -37,7 +42,14 @@ export type GraphDocumentListener<T> = {
   fn: ListenerFn<GraphDocument<T>>;
 };
 
+export type GraphDocumentListenerOn = {
+  id: string;
+  type: 'create' | 'update' | 'remove' | 'populate';
+  fn: ListenerOnFn;
+};
+
 export type GraphDocumentListeners<T> = GraphDocumentListener<T>[];
+export type GraphDocumentListenersOn = GraphDocumentListenerOn[];
 
 export type CancelListenerFn = () => void;
 

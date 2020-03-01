@@ -16,6 +16,7 @@ GraphDB is an in memory database with sync capabilities that lets you handle dat
 - [Create a collection](#create-a-collection)
 - [Get a collection](#get-a-collection)
 - [Populate a collection](#populate-a-collection)
+- [Listen to collection on](#listen-to-collection-on)
 - [Create a document](#create-a-document)
 - [Read a document](#read-a-document)
 - [Query documents](#query-documents)
@@ -46,7 +47,7 @@ const graphdb = GraphDB();
 # API and Types
 
 ```typescript
-type GraphDBType = {
+export type GraphDBType = {
   createCollection: <T>(
     collectionId: string,
     syncers?: GraphDocumentSyncers<T>
@@ -54,47 +55,60 @@ type GraphDBType = {
   getCollection: <T>(collectionId: string) => Collection<T> | null;
 };
 
-type Where = {
+export type Where = {
   [property: string]: any;
 };
 
-type Collection<T> = {
+export type Collection<T> = {
   read: (documentId: string) => GraphDocument<T>;
   query: (where: Where) => GraphDocument<T> | GraphDocument<T>[] | null;
   create: (document: T) => Promise<string>;
   update: (documentId: string, patch: Partial<T>) => Promise<GraphDocument<T>>;
   remove: (documentId: string) => Promise<RemoveOperationFeedback>;
+  populate: (population: GraphDocument<T>[]) => void;
   listen: (
     documentId: string,
     listener: ListenerFn<GraphDocument<T>>
   ) => CancelListenerFn;
+  on: (
+    type: 'create' | 'update' | 'remove' | 'populate',
+    listener: ListenerFn<GraphDocument<T>>
+  ) => CancelListenerFn;
 };
 
-type GraphDocument<T> = {
+export type GraphDocument<T> = {
   _id: string;
   createdAt: Date;
   updateAt: Date;
 } & T;
 
-type ListenerFn<T> = (document: T) => void;
+export type ListenerFn<T> = (document: GraphDocument<T>) => void;
+export type ListenerOnFn = () => void;
 
-type GraphDocumentListener<T> = {
+export type GraphDocumentListener<T> = {
   id: string;
   document: string;
   fn: ListenerFn<GraphDocument<T>>;
 };
 
-type GraphDocumentListeners<T> = GraphDocumentListener<T>[];
+export type GraphDocumentListenerOn = {
+  id: string;
+  type: 'create' | 'update' | 'remove' | 'populate';
+  fn: ListenerOnFn;
+};
 
-type CancelListenerFn = () => void;
+export type GraphDocumentListeners<T> = GraphDocumentListener<T>[];
+export type GraphDocumentListenersOn = GraphDocumentListenerOn[];
 
-type GraphDocumentSyncers<T> = {
+export type CancelListenerFn = () => void;
+
+export type GraphDocumentSyncers<T> = {
   create?: (document: GraphDocument<T>) => Promise<boolean>;
   update?: (document: GraphDocument<T>) => Promise<boolean>;
   remove?: (documentId: string) => Promise<boolean>;
 };
 
-type RemoveOperationFeedback = {
+export type RemoveOperationFeedback = {
   removedId: string;
   acknowledge: true;
 };
@@ -185,6 +199,33 @@ userCollection.populate([
     updateAt: new Date(),
   },
 ]);
+```
+
+# Listen to collection on
+
+```typescript
+import { GraphDocument } from '@alexvcasillas/graphdb';
+
+interface UserModel {
+  name: string;
+  lastName: string;
+  age: string;
+}
+
+const userCollection = graphdb.getCollection<UserModel>('user');
+
+const stopOnCreateListen = userCollection.on('create', function onCreate() {});
+const stopOnPopulateListen = userCollection.on(
+  'create',
+  function onPopulate() {}
+);
+const stopOnUpdateListen = userCollection.on('create', function onUpdate() {});
+const stopOnRemoveListen = userCollection.on('create', function onRemove() {});
+
+stopOnCreateListen();
+stopOnPopulateListen();
+stopOnUpdateListen();
+stopOnRemoveListen();
 ```
 
 # Create a document

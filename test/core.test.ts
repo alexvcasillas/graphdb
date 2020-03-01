@@ -1162,4 +1162,133 @@ describe('core behaviour', () => {
       })
     );
   });
+  it('shoud listen to on create changes on an given document collection', async () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+
+    const mockListener = jest.fn();
+
+    const cancelListener = userCollection?.on('create', mockListener);
+
+    await userCollection?.create({
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+    });
+
+    cancelListener && cancelListener();
+
+    expect(mockListener).toBeCalled();
+  });
+  it('shoud listen to on populate changes on an given document collection', async () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+
+    const mockListener = jest.fn();
+
+    const cancelListener = userCollection?.on('populate', mockListener);
+
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
+
+    cancelListener && cancelListener();
+
+    expect(mockListener).toBeCalled();
+  });
+  it('shoud listen to on update changes on an given document collection', async () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+
+    const mockListener = jest.fn();
+
+    const cancelListener = userCollection?.on('update', mockListener);
+
+    const insertedId = await userCollection?.create({
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+    });
+
+    await userCollection?.update(insertedId as string, {
+      name: 'John',
+      lastName: 'Snow',
+      age: 19,
+    });
+
+    cancelListener && cancelListener();
+
+    expect(mockListener).toBeCalled();
+  });
+  it('shoud listen to on remove changes on an given document collection', async () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+
+    const mockListener = jest.fn();
+
+    const cancelListener = userCollection?.on('remove', mockListener);
+
+    const insertedId = await userCollection?.create({
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+    });
+
+    await userCollection?.remove(insertedId as string);
+
+    cancelListener && cancelListener();
+
+    expect(mockListener).toBeCalled();
+  });
 });

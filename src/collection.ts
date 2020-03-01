@@ -8,12 +8,24 @@ import {
   ListenerFn,
   CancelListenerFn,
   Where,
+  GraphDocumentListenersOn,
+  ListenerOnFn,
 } from './types';
 import { whereChecker } from './utils/where-checker';
 
 export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
   const documents = new Map<string, GraphDocument<T>>();
   let listeners: GraphDocumentListeners<T> = [];
+  let listenersOn: GraphDocumentListenersOn = [];
+
+  function notifyListenersOn(
+    notifyType: 'create' | 'update' | 'remove' | 'populate'
+  ) {
+    if (listenersOn.length === 0) return;
+    listenersOn
+      .filter(listener => listener.type === notifyType)
+      .forEach(listener => listener.fn());
+  }
 
   const read = (documentId: string): GraphDocument<T> | null => {
     return documents.get(documentId) || null;
@@ -59,11 +71,13 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
           // Do nothing here
         }
         if (syncResult) {
+          notifyListenersOn('create');
           return resolve(_id);
         }
         documents.delete(_id);
         return reject(new Error(`Document synchronization wasn't possible.`));
       }
+      notifyListenersOn('create');
       return resolve(_id);
     });
   };
@@ -125,6 +139,8 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
         });
       }
 
+      notifyListenersOn('update');
+
       return resolve({ ...document, ...patch, updateAt: updateTimestamp });
     });
   };
@@ -165,6 +181,9 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
           );
         }
       }
+
+      notifyListenersOn('remove');
+
       return resolve({
         removedId: documentId,
         acknowledge: true,
@@ -177,6 +196,7 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
     for (let i = 0; i <= amountOfDocuments; i++) {
       documents.set(population[i]._id, population[i]);
     }
+    notifyListenersOn('populate');
   };
 
   const listen = (
@@ -194,6 +214,21 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
     };
   };
 
+  const on = (
+    type: 'create' | 'update' | 'remove' | 'populate',
+    listener: ListenerOnFn
+  ): CancelListenerFn => {
+    const listenerId = `on-${type}-${uuid()}`;
+    listenersOn.push({
+      id: listenerId,
+      type,
+      fn: listener,
+    });
+    return () => {
+      listenersOn = listenersOn.filter(listener => listener.id !== listenerId);
+    };
+  };
+
   return {
     read,
     query,
@@ -202,5 +237,6 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
     remove,
     populate,
     listen,
+    on,
   };
 }

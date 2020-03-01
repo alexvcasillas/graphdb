@@ -216,11 +216,11 @@ const userCollection = graphdb.getCollection<UserModel>('user');
 
 const stopOnCreateListen = userCollection.on('create', function onCreate() {});
 const stopOnPopulateListen = userCollection.on(
-  'create',
+  'populate',
   function onPopulate() {}
 );
-const stopOnUpdateListen = userCollection.on('create', function onUpdate() {});
-const stopOnRemoveListen = userCollection.on('create', function onRemove() {});
+const stopOnUpdateListen = userCollection.on('update', function onUpdate() {});
+const stopOnRemoveListen = userCollection.on('remove', function onRemove() {});
 
 stopOnCreateListen();
 stopOnPopulateListen();

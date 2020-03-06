@@ -12,6 +12,7 @@ import {
   ListenerOnFn,
 } from './types';
 import { whereChecker } from './utils/where-checker';
+import { isEmptyObject } from './utils/empty-object';
 
 export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
   const documents = new Map<string, GraphDocument<T>>();
@@ -35,7 +36,12 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
     where: Where
   ): GraphDocument<T> | GraphDocument<T>[] | null => {
     const queriedDocuments: GraphDocument<T>[] = [];
+    const emptyWhere = isEmptyObject(where);
     documents.forEach((document: GraphDocument<T>) => {
+      if (emptyWhere) {
+        queriedDocuments.push(document);
+        return;
+      }
       let allKeysMatch = true;
       for (let [key, value] of Object.entries(where)) {
         if (!whereChecker<T>(key, value, document)) allKeysMatch = false;

@@ -3,7 +3,7 @@
 GraphDB is an in memory database with sync capabilities that lets you handle data the way you want with a bare minimum setup.
 
 [![CircleCI](https://circleci.com/gh/alexvcasillas/graphdb.svg?style=svg)](https://circleci.com/gh/alexvcasillas/graphdb)
-[![Codecoverage](https://img.shields.io/badge/coverage-94.4%25-green)](https://img.shields.io/badge/coverage-94.4%25-green)
+[![Codecoverage](https://img.shields.io/badge/coverage-94.4%25-green)](https://img.shields.io/badge/coverage-97.66%25-green)
 
 [![BundleSize](https://img.shields.io/bundlephobia/minzip/@alexvcasillas/graphdb)](https://img.shields.io/bundlephobia/minzip/@alexvcasillas/graphdb)
 [![Downloads](https://img.shields.io/npm/dw/@alexvcasillas/graphdb)](https://img.shields.io/npm/dw/@alexvcasillas/graphdb)
@@ -283,6 +283,8 @@ await userCollection.create({
   age: 29,
 });
 
+// Empty where clause returns all documents on the collection
+userCollection.query({});
 userCollection.query({ name: 'Alex', age: 29 });
 ```
 

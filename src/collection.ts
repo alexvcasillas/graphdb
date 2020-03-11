@@ -10,9 +10,11 @@ import {
   Where,
   GraphDocumentListenersOn,
   ListenerOnFn,
+  QueryOptions,
 } from './types';
 import { whereChecker } from './utils/where-checker';
 import { isEmptyObject } from './utils/empty-object';
+import { sortDocuments } from './utils/sort-documents';
 
 export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
   const documents = new Map<string, GraphDocument<T>>();
@@ -33,10 +35,12 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
   };
 
   const query = (
-    where: Where
+    where: Where,
+    options?: QueryOptions
   ): GraphDocument<T> | GraphDocument<T>[] | null => {
     const queriedDocuments: GraphDocument<T>[] = [];
     const emptyWhere = isEmptyObject(where);
+
     documents.forEach((document: GraphDocument<T>) => {
       if (emptyWhere) {
         queriedDocuments.push(document);
@@ -44,13 +48,30 @@ export function Collection<T>(syncers?: GraphDocumentSyncers<T>) {
       }
       let allKeysMatch = true;
       for (let [key, value] of Object.entries(where)) {
-        if (!whereChecker<T>(key, value, document)) allKeysMatch = false;
+        if (!whereChecker<T>(key as keyof T, value, document))
+          allKeysMatch = false;
       }
       if (allKeysMatch) queriedDocuments.push(document);
     });
     if (queriedDocuments.length === 0) return null;
     if (queriedDocuments.length === 1) return queriedDocuments[0];
-    return queriedDocuments;
+    // Check for options for an early return if not provided
+    if (!options) return queriedDocuments;
+    // Options behaviour
+    let filteredWithOptions = [...queriedDocuments];
+    // Skip
+    if (options.skip && options.skip < filteredWithOptions.length) {
+      filteredWithOptions = filteredWithOptions.slice(options.skip);
+    }
+    // Limit
+    if (options.limit) {
+      filteredWithOptions = filteredWithOptions.slice(0, options.limit);
+    }
+    // Order by
+    if (options.orderBy) {
+      filteredWithOptions = sortDocuments(filteredWithOptions, options.orderBy);
+    }
+    return filteredWithOptions;
   };
 
   const create = (document: T): Promise<string> => {

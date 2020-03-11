@@ -1,7 +1,7 @@
-import { GraphDocument } from 'types';
+import { GraphDocument } from '../types';
 
 export const whereChecker = <T>(
-  propertyToCheck: string,
+  propertyToCheck: keyof T,
   whereClause: object | any,
   document: GraphDocument<T>
 ): boolean => {
@@ -11,7 +11,6 @@ export const whereChecker = <T>(
     return document[propertyToCheck] === whereClause;
   }
   for (let [key, value] of Object.entries(whereClause)) {
-    // @ts-ignore
     if (typeof value !== typeof document[propertyToCheck]) {
       allKeysMatch = false;
       continue;

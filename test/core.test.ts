@@ -1291,4 +1291,192 @@ describe('core behaviour', () => {
 
     expect(mockListener).toBeCalled();
   });
+  it('should limit the resulting collection to the given amount', () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
+
+    const queryResult = userCollection?.query(
+      {},
+      { limit: 2 }
+    ) as GraphDocument<UserModel>[];
+    expect(queryResult.length).toBe(2);
+  });
+  it('should skip the given amount of elements from the collection', () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
+
+    const queryResult = userCollection?.query({}, { skip: 2 }) as GraphDocument<
+      UserModel
+    >[];
+    expect(queryResult.length).toBe(4);
+    expect(queryResult[0]._id).toBe('3');
+  });
+  it('should skip the given amount of elements from the collection and limit the result by the given amount', () => {
+    const graphdb = GraphDB();
+    graphdb.createCollection<UserModel>('user');
+    const userCollection = graphdb.getCollection<UserModel>('user');
+
+    userCollection?.populate([
+      {
+        _id: '1',
+        name: 'Alex',
+        lastName: 'Casillas',
+        age: 29,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '2',
+        name: 'Daniel',
+        lastName: 'Casillas',
+        age: 22,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '3',
+        name: 'Antonio',
+        lastName: 'Cobos',
+        age: 34,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '4',
+        name: 'John',
+        lastName: 'Snow',
+        age: 19,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '5',
+        name: 'John',
+        lastName: 'Doe',
+        age: 40,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+      {
+        _id: '6',
+        name: 'Jane',
+        lastName: 'Doe',
+        age: 50,
+        createdAt: new Date(),
+        updateAt: new Date(),
+      },
+    ]);
+
+    const queryResult = userCollection?.query(
+      {},
+      { skip: 2, limit: 2 }
+    ) as GraphDocument<UserModel>[];
+    expect(queryResult.length).toBe(2);
+    expect(queryResult[0]._id).toBe('3');
+    expect(queryResult[1]._id).toBe('4');
+  });
 });

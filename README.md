@@ -3,7 +3,7 @@
 GraphDB is an in memory database with sync capabilities that lets you handle data the way you want with a bare minimum setup.
 
 [![CircleCI](https://circleci.com/gh/alexvcasillas/graphdb.svg?style=svg)](https://circleci.com/gh/alexvcasillas/graphdb)
-[![Codecoverage](https://img.shields.io/badge/coverage-94.4%25-green)](https://img.shields.io/badge/coverage-97.66%25-green)
+[![Codecoverage](https://img.shields.io/badge/coverage-94.4%25-green)](https://img.shields.io/badge/coverage-98.97%25-green)
 
 [![BundleSize](https://img.shields.io/bundlephobia/minzip/@alexvcasillas/graphdb)](https://img.shields.io/bundlephobia/minzip/@alexvcasillas/graphdb)
 [![Downloads](https://img.shields.io/npm/dw/@alexvcasillas/graphdb)](https://img.shields.io/npm/dw/@alexvcasillas/graphdb)
@@ -21,6 +21,7 @@ GraphDB is an in memory database with sync capabilities that lets you handle dat
 - [Read a document](#read-a-document)
 - [Query documents](#query-documents)
 - [Query documents with complex where clause](#query-documents-with-complex-where-clause)
+- [Query documents with additional options](#query-documents-with-additional-options)
 - [Update a document](#update-a-document)
 - [Remove a document](#remove-a-document)
 - [Listen to changes](#listen-to-changes)
@@ -59,9 +60,20 @@ export type Where = {
   [property: string]: any;
 };
 
+export type QueryOptions = {
+  skip?: number;
+  limit?: number;
+  orderBy?: {
+    [key: string]: 'ASC' | 'DESC';
+  };
+};
+
 export type Collection<T> = {
   read: (documentId: string) => GraphDocument<T>;
-  query: (where: Where) => GraphDocument<T> | GraphDocument<T>[] | null;
+  query: (
+    where: Where,
+    options?: QueryOptions
+  ) => GraphDocument<T> | GraphDocument<T>[] | null;
   create: (document: T) => Promise<string>;
   update: (documentId: string, patch: Partial<T>) => Promise<GraphDocument<T>>;
   remove: (documentId: string) => Promise<RemoveOperationFeedback>;
@@ -297,7 +309,7 @@ Complex operators include for now:
 - `lt`: lower than
 - `lte`: lower than or equals
 
-This operators can be combine to form complex where clauses like the following:
+This operators can be combined to form complex where clauses like the following:
 
 ```
 { age: { gt: 20, lt: 40 } }
@@ -377,6 +389,103 @@ const queryResult = userCollection?.query({
 
 // queryResult[2]
 // { _id: '6', name: 'Jane', lastName: 'Doe', age: 50 }
+```
+
+# Query documents with additional options
+
+Additional options for the query are the following:
+
+- `skip`: skips the given amount of documents from the beginning of the collection
+- `limit`: by the given amount limits the resulted documents from the query
+- `orderBy`: sorts the resulted query documents by the given fields in the given order (ASC or DESC)
+
+This operators can be combined to form complex option clauses like the following:
+
+```
+{
+  skip: 2,
+  limit: 4,
+  orderBy: {
+    age: 'DESC',
+  },
+}
+```
+
+```typescript
+interface UserModel {
+  name: string;
+  lastName: string;
+  age: string;
+}
+
+const userCollection = graphdb.getCollection<UserModel>('user');
+
+userCollection?.populate([
+  {
+    _id: '1',
+    name: 'Alex',
+    lastName: 'Casillas',
+    age: 29,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '2',
+    name: 'Daniel',
+    lastName: 'Casillas',
+    age: 22,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '3',
+    name: 'Antonio',
+    lastName: 'Cobos',
+    age: 34,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '4',
+    name: 'John',
+    lastName: 'Snow',
+    age: 19,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '5',
+    name: 'John',
+    lastName: 'Doe',
+    age: 40,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '6',
+    name: 'Jane',
+    lastName: 'Doe',
+    age: 50,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+]);
+
+const queryResult = userCollection?.query(
+  {},
+  {
+    orderBy: {
+      age: 'ASC',
+    },
+  }
+);
+
+// queryResult[0]._id = '4'
+// queryResult[1]._id = '2'
+// queryResult[2]._id = '1'
+// queryResult[3]._id = '3'
+// queryResult[4]._id = '5'
+// queryResult[5]._id = '6'
 ```
 
 # Update a document

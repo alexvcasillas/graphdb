@@ -10,9 +10,20 @@ export type Where = {
   [property: string]: any;
 };
 
+export type QueryOptions = {
+  skip?: number;
+  limit?: number;
+  orderBy?: {
+    [key: string]: 'ASC' | 'DESC';
+  };
+};
+
 export type Collection<T> = {
   read: (documentId: string) => GraphDocument<T>;
-  query: (where: Where) => GraphDocument<T> | GraphDocument<T>[] | null;
+  query: (
+    where: Where,
+    options?: QueryOptions
+  ) => GraphDocument<T> | GraphDocument<T>[] | null;
   create: (document: T) => Promise<string>;
   update: (documentId: string, patch: Partial<T>) => Promise<GraphDocument<T>>;
   remove: (documentId: string) => Promise<RemoveOperationFeedback>;

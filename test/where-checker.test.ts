@@ -1,7 +1,7 @@
 import { whereChecker } from '../src/utils/where-checker';
 
 describe('utils: where checker', () => {
-  it('Should check for a GT clause agains a valid document (1/2)', () => {
+  it('Should check for a GT clause against a valid document (1/2)', () => {
     const document = {
       _id: '1',
       name: 'Alex',
@@ -12,7 +12,7 @@ describe('utils: where checker', () => {
     };
     expect(whereChecker('age', { gt: 20 }, document)).toBe(true);
   });
-  it('Should check for a GT clause agains a valid document (2/2)', () => {
+  it('Should check for a GT clause against a valid document (2/2)', () => {
     const document = {
       _id: '1',
       name: 'Alex',
@@ -23,7 +23,7 @@ describe('utils: where checker', () => {
     };
     expect(whereChecker('age', { gt: 30 }, document)).toBe(false);
   });
-  it('Should check for a GTE clause agains a valid document (2/2)', () => {
+  it('Should check for a GTE clause against a valid document (2/2)', () => {
     const document = {
       _id: '1',
       name: 'Alex',
@@ -34,7 +34,7 @@ describe('utils: where checker', () => {
     };
     expect(whereChecker('age', { gte: 29 }, document)).toBe(true);
   });
-  it('Should check for a GTE clause agains a valid document (2/2)', () => {
+  it('Should check for a GTE clause against a valid document (2/2)', () => {
     const document = {
       _id: '1',
       name: 'Alex',
@@ -45,7 +45,7 @@ describe('utils: where checker', () => {
     };
     expect(whereChecker('age', { gte: 30 }, document)).toBe(false);
   });
-  it('Should check for a LT clause agains a valid document (1/2)', () => {
+  it('Should check for a LT clause against a valid document (1/2)', () => {
     const document = {
       _id: '1',
       name: 'Alex',
@@ -56,7 +56,7 @@ describe('utils: where checker', () => {
     };
     expect(whereChecker('age', { lt: 30 }, document)).toBe(true);
   });
-  it('Should check for a LT clause agains a valid document (2/2)', () => {
+  it('Should check for a LT clause against a valid document (2/2)', () => {
     const document = {
       _id: '1',
       name: 'Alex',
@@ -67,7 +67,7 @@ describe('utils: where checker', () => {
     };
     expect(whereChecker('age', { lt: 20 }, document)).toBe(false);
   });
-  it('Should check for a LTE clause agains a valid document (2/2)', () => {
+  it('Should check for a LTE clause against a valid document (2/2)', () => {
     const document = {
       _id: '1',
       name: 'Alex',
@@ -78,7 +78,7 @@ describe('utils: where checker', () => {
     };
     expect(whereChecker('age', { lte: 29 }, document)).toBe(true);
   });
-  it('Should check for a LTE clause agains a valid document (2/2)', () => {
+  it('Should check for a LTE clause against a valid document (2/2)', () => {
     const document = {
       _id: '1',
       name: 'Alex',
@@ -110,5 +110,60 @@ describe('utils: where checker', () => {
       updateAt: new Date(),
     };
     expect(whereChecker('age', { wolo: '29' }, document)).toBe(false);
+  });
+  it('Should check for an EQ clause against a valid document', () => {
+    const document = {
+      _id: '1',
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+      createdAt: new Date(),
+      updateAt: new Date(),
+    };
+    expect(whereChecker('name', { eq: 'Alex' }, document)).toBe(true);
+  });
+  it('Should check for a NOTEQ clause against a valid document', () => {
+    const document = {
+      _id: '1',
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+      createdAt: new Date(),
+      updateAt: new Date(),
+    };
+    expect(whereChecker('name', { notEq: 'John' }, document)).toBe(true);
+  });
+  it('Should check for an INCLUDES clause against a valid document', () => {
+    const document = {
+      _id: '1',
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+      createdAt: new Date(),
+      updateAt: new Date(),
+    };
+    expect(whereChecker('name', { includes: 'le' }, document)).toBe(true);
+  });
+  it('Should check for a STARSWITH clause against a valid document', () => {
+    const document = {
+      _id: '1',
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+      createdAt: new Date(),
+      updateAt: new Date(),
+    };
+    expect(whereChecker('name', { startsWith: 'Al' }, document)).toBe(true);
+  });
+  it('Should check for a ENDSWITH clause against a valid document', () => {
+    const document = {
+      _id: '1',
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+      createdAt: new Date(),
+      updateAt: new Date(),
+    };
+    expect(whereChecker('name', { endsWith: 'ex' }, document)).toBe(true);
   });
 });

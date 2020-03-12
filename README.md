@@ -3,7 +3,7 @@
 GraphDB is an in memory database with sync capabilities that lets you handle data the way you want with a bare minimum setup.
 
 [![CircleCI](https://circleci.com/gh/alexvcasillas/graphdb.svg?style=svg)](https://circleci.com/gh/alexvcasillas/graphdb)
-[![Codecoverage](https://img.shields.io/badge/coverage-98.97%25-green)](https://img.shields.io/badge/coverage-98.97%25-green)
+[![Codecoverage](https://img.shields.io/badge/coverage-98.87%25-green)](https://img.shields.io/badge/coverage-98.87%25-green)
 
 [![BundleSize](https://img.shields.io/bundlephobia/minzip/@alexvcasillas/graphdb)](https://img.shields.io/bundlephobia/minzip/@alexvcasillas/graphdb)
 [![Downloads](https://img.shields.io/npm/dw/@alexvcasillas/graphdb)](https://img.shields.io/npm/dw/@alexvcasillas/graphdb)
@@ -302,14 +302,12 @@ userCollection.query({ name: 'Alex', age: 29 });
 
 # Query documents with complex where clause
 
-Complex operators include for now:
+Complex operators for `number` types include for now:
 
 - `gt`: greater than
 - `gte`: greater than or equals
 - `lt`: lower than
 - `lte`: lower than or equals
-
-This operators can be combined to form complex where clauses like the following:
 
 ```
 { age: { gt: 20, lt: 40 } }
@@ -389,6 +387,103 @@ const queryResult = userCollection?.query({
 
 // queryResult[2]
 // { _id: '6', name: 'Jane', lastName: 'Doe', age: 50 }
+```
+
+Complex operators for `string` types include for now:
+
+- `eq`: equals
+- `notEq`: not equals
+- `includes`: includes the given substring
+- `startsWith`: starts with the given substring
+- `endsWith`: ends with the given substring
+
+This operators can be used to form complex where clauses like the following:
+
+```
+{ email: { endsWith: '@gmail.com' } }
+```
+
+```typescript
+interface UserModel {
+  name: string;
+  lastName: string;
+  age: string;
+  email: string;
+}
+
+const userCollection = graphdb.getCollection<UserModel>('user');
+
+userCollection?.populate([
+  {
+    _id: '1',
+    name: 'Alex',
+    lastName: 'Casillas',
+    email: 'alex@gmail.com',
+    age: 29,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '2',
+    name: 'Daniel',
+    lastName: 'Casillas',
+    email: 'dani@hotmail.com',
+    age: 22,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '3',
+    name: 'Antonio',
+    lastName: 'Cobos',
+    email: 'antonio@gmail.com',
+    age: 34,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '4',
+    name: 'John',
+    lastName: 'Snow',
+    email: 'john@thewall.com'
+    age: 19,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '5',
+    name: 'John',
+    lastName: 'Doe',
+    email: 'john@gmail.com',
+    age: 40,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '6',
+    name: 'Jane',
+    lastName: 'Doe',
+    email: 'jane@msn.com',
+    age: 50,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+]);
+
+const queryResult = userCollection?.query({
+  email: { endsWith: '@gmail.com' },
+});
+
+// queryResult.length === 3
+
+// queryResult[0]
+// { _id: '1', name: 'Alex', lastName: 'Casillas', email: 'alex@gmail.com' }
+
+// queryResult[1]
+// { _id: '3', name: 'Antonio', lastName: 'Cobos', email: 'antonio@gmail.com' }
+
+// queryResult[2]
+// { _id: '5', name: 'John', lastName: 'Doe', email: 'john@gmail.com' }
 ```
 
 # Query documents with additional options

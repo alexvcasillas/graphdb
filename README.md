@@ -343,7 +343,7 @@ userCollection?.populate([
     _id: '3',
     name: 'Antonio',
     lastName: 'Cobos',
-    age: 34,
+    age: 35,
     createdAt: new Date(),
     updateAt: new Date(),
   },
@@ -380,7 +380,7 @@ const queryResult = userCollection?.query({
 // queryResult.length === 3
 
 // queryResult[0]
-// { _id: '3', name: 'Antonio', lastName: 'Cobos', age: 34 }
+// { _id: '3', name: 'Antonio', lastName: 'Cobos', age: 35 }
 
 // queryResult[1]
 // { _id: '5', name: 'John', lastName: 'Doe', age: 40 }
@@ -437,7 +437,7 @@ userCollection?.populate([
     name: 'Antonio',
     lastName: 'Cobos',
     email: 'antonio@gmail.com',
-    age: 34,
+    age: 35,
     createdAt: new Date(),
     updateAt: new Date(),
   },
@@ -536,7 +536,7 @@ userCollection?.populate([
     _id: '3',
     name: 'Antonio',
     lastName: 'Cobos',
-    age: 34,
+    age: 35,
     createdAt: new Date(),
     updateAt: new Date(),
   },

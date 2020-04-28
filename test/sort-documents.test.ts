@@ -21,7 +21,7 @@ const mockDocs = [
     _id: '3',
     name: 'Antonio',
     lastName: 'Cobos',
-    age: 34,
+    age: 35,
     createdAt: new Date('04/03/1985'),
     updateAt: new Date(),
   },
@@ -57,7 +57,7 @@ describe('utils: sort documents', () => {
     expect(orderedDocuments[0].age).toBe(19);
     expect(orderedDocuments[1].age).toBe(22);
     expect(orderedDocuments[2].age).toBe(29);
-    expect(orderedDocuments[3].age).toBe(34);
+    expect(orderedDocuments[3].age).toBe(35);
     expect(orderedDocuments[4].age).toBe(40);
     expect(orderedDocuments[5].age).toBe(50);
   });
@@ -65,7 +65,7 @@ describe('utils: sort documents', () => {
     const orderedDocuments = sortDocuments(mockDocs, { age: 'DESC' });
     expect(orderedDocuments[0].age).toBe(50);
     expect(orderedDocuments[1].age).toBe(40);
-    expect(orderedDocuments[2].age).toBe(34);
+    expect(orderedDocuments[2].age).toBe(35);
     expect(orderedDocuments[3].age).toBe(29);
     expect(orderedDocuments[4].age).toBe(22);
     expect(orderedDocuments[5].age).toBe(19);

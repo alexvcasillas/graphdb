@@ -300,6 +300,85 @@ userCollection.query({});
 userCollection.query({ name: 'Alex', age: 29 });
 ```
 
+RegExp can be used as value to check for a matching property without the need of a complex query object.
+
+```typescript
+interface UserModel {
+  name: string;
+  lastName: string;
+  age: string;
+  email: string;
+}
+
+const userCollection = graphdb.getCollection<UserModel>('user');
+
+userCollection?.populate([
+  {
+    _id: '1',
+    name: 'Alex',
+    lastName: 'Casillas',
+    email: 'alex@gmail.com',
+    age: 29,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '2',
+    name: 'Daniel',
+    lastName: 'Casillas',
+    email: 'dani@hotmail.com',
+    age: 22,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '3',
+    name: 'Antonio',
+    lastName: 'Cobos',
+    email: 'antonio@gmail.com',
+    age: 35,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '4',
+    name: 'John',
+    lastName: 'Snow',
+    email: 'john@thewall.com'
+    age: 19,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '5',
+    name: 'John',
+    lastName: 'Doe',
+    email: 'john@gmail.com',
+    age: 40,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+  {
+    _id: '6',
+    name: 'Jane',
+    lastName: 'Doe',
+    email: 'jane@msn.com',
+    age: 50,
+    createdAt: new Date(),
+    updateAt: new Date(),
+  },
+]);
+
+const queryResult = userCollection?.query({
+  'name', new RegExp(/Al{1,1}/ig)
+});
+
+// queryResult.length === 1
+
+// queryResult[0]
+// { _id: '1', name: 'Alex', lastName: 'Casillas', email: 'alex@gmail.com' }
+```
+
 # Query documents with complex where clause
 
 Complex operators for `number` types include for now:

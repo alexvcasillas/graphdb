@@ -7,14 +7,25 @@ export const whereChecker = <T>(
 ): boolean => {
   let allKeysMatch = true;
   if (typeof whereClause !== 'object') {
+    if (whereClause instanceof RegExp) {
+      return whereClause.test((document[propertyToCheck] as unknown) as string);
+    }
+
     const prop = (document[propertyToCheck] as unknown) as any;
     return prop === whereClause;
   }
   for (let [key, value] of Object.entries(whereClause)) {
+    if (key === 'match' && value instanceof RegExp) {
+      const prop = (document[propertyToCheck] as unknown) as string;
+      if (!value.test(prop)) allKeysMatch = false;
+      continue;
+    }
+
     if (typeof value !== typeof document[propertyToCheck]) {
       allKeysMatch = false;
       continue;
     }
+
     if (typeof value === 'number') {
       const prop = (document[propertyToCheck] as unknown) as number;
       if (key === 'gt' && typeof value === 'number') {

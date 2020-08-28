@@ -166,4 +166,28 @@ describe('utils: where checker', () => {
     };
     expect(whereChecker('name', { endsWith: 'ex' }, document)).toBe(true);
   });
+  it('Should check for a MATCH RegExp clause against a valid document (lean)', () => {
+    const document = {
+      _id: '1',
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+      createdAt: new Date(),
+      updateAt: new Date(),
+    };
+    expect(whereChecker('name', new RegExp(/Al{1,1}/gi), document)).toBe(true);
+  });
+  it('Should check for a MATCH RegExp clause against a valid document (complex clause)', () => {
+    const document = {
+      _id: '1',
+      name: 'Alex',
+      lastName: 'Casillas',
+      age: 29,
+      createdAt: new Date(),
+      updateAt: new Date(),
+    };
+    expect(
+      whereChecker('name', { match: new RegExp(/Al{1,1}/gi) }, document)
+    ).toBe(true);
+  });
 });

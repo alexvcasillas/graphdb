@@ -1,0 +1,14 @@
+{
+  "name": "@graphdb/docs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "GraphDB documentation website (placeholder)",
+  "license": "MIT",
+  "scripts": {
+    "lint": "echo 'no lint configured yet'",
+    "typecheck": "echo 'no typecheck configured yet'",
+    "build": "echo 'no build configured yet'",
+    "clean": "echo 'no clean configured yet'",
+    "test": "echo 'no tests configured yet'"
+  }
+}

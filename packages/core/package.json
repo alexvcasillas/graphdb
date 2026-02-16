@@ -1,0 +1,43 @@
+{
+  "name": "@graphdb/core",
+  "version": "2.0.0",
+  "description": "An in-memory database with sync capabilities — zero runtime deps",
+  "license": "MIT",
+  "author": "Alex Casillas",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "clean": "rm -rf dist",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build:types": "tsc -p tsconfig.build.json",
+    "build:esm": "bun build src/index.ts --outdir dist --format esm --target bun --external @graphdb/types",
+    "build:cjs": "bun build src/index.ts --outfile dist/index.cjs --format cjs --target bun --external @graphdb/types",
+    "build": "bun run clean && bun run build:types && bun run build:esm && bun run build:cjs",
+    "test": "bun test",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@graphdb/types": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

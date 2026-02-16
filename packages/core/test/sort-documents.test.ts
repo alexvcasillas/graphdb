@@ -57,4 +57,40 @@ describe('sort-documents', () => {
     const sorted = sortDocuments(docs, {});
     expect(sorted.map(d => d._id)).toEqual(docs.map(d => d._id));
   });
+
+  it('sorts with undefined values (docs missing the field)', () => {
+    type Partial = { name: string; score?: number };
+    const mixed: Doc<Partial>[] = [
+      { _id: '1', name: 'A', score: 10, createdAt: now, updatedAt: now } as Doc<Partial>,
+      { _id: '2', name: 'B', createdAt: now, updatedAt: now } as Doc<Partial>,
+      { _id: '3', name: 'C', score: 5, createdAt: now, updatedAt: now } as Doc<Partial>,
+    ];
+    const sorted = sortDocuments(mixed, { score: 'ASC' });
+    // Should not crash; docs with undefined score treated as equal via fallback
+    expect(sorted.length).toBe(3);
+  });
+
+  it('sort stability: equal elements preserve insertion order', () => {
+    type Simple = { group: string; seq: number };
+    const items: Doc<Simple>[] = [
+      { _id: '1', group: 'A', seq: 1, createdAt: now, updatedAt: now } as Doc<Simple>,
+      { _id: '2', group: 'A', seq: 2, createdAt: now, updatedAt: now } as Doc<Simple>,
+      { _id: '3', group: 'A', seq: 3, createdAt: now, updatedAt: now } as Doc<Simple>,
+    ];
+    const sorted = sortDocuments(items, { group: 'ASC' });
+    // All have the same group, so insertion order should be preserved
+    expect(sorted.map(d => d._id)).toEqual(['1', '2', '3']);
+  });
+
+  it('sorts with mixed/unsupported types without crashing', () => {
+    type Mixed = { value: unknown };
+    const items: Doc<Mixed>[] = [
+      { _id: '1', value: true, createdAt: now, updatedAt: now } as Doc<Mixed>,
+      { _id: '2', value: null, createdAt: now, updatedAt: now } as Doc<Mixed>,
+      { _id: '3', value: { nested: 1 }, createdAt: now, updatedAt: now } as Doc<Mixed>,
+    ];
+    const sorted = sortDocuments(items, { value: 'ASC' });
+    // Should not crash; unsupported types treated as equal
+    expect(sorted.length).toBe(3);
+  });
 });

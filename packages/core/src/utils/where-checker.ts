@@ -47,7 +47,6 @@ export function whereChecker<T>(
       else if (op === 'gte' && !(value >= operand)) return false;
       else if (op === 'lt' && !(value < operand)) return false;
       else if (op === 'lte' && !(value <= operand)) return false;
-      else if (!['gt', 'gte', 'lt', 'lte'].includes(op)) return false;
       continue;
     }
 
@@ -56,7 +55,6 @@ export function whereChecker<T>(
       if (op === 'includes' && !value.includes(operand)) return false;
       else if (op === 'startsWith' && !value.startsWith(operand)) return false;
       else if (op === 'endsWith' && !value.endsWith(operand)) return false;
-      else if (!['includes', 'startsWith', 'endsWith'].includes(op)) return false;
       continue;
     }
 

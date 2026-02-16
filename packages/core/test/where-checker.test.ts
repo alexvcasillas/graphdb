@@ -96,4 +96,23 @@ describe('where-checker', () => {
   it('primitive inequality', () => {
     expect(whereChecker('name', 'Bob', doc)).toBe(false);
   });
+
+  // Type mismatch: numeric operator on string field
+  it('returns false for numeric operator on string field', () => {
+    expect(whereChecker('name', { gt: 10 }, doc)).toBe(false);
+  });
+
+  // Type mismatch: string operator on numeric field
+  it('returns false for string operator on numeric field', () => {
+    expect(whereChecker('age', { includes: '29' }, doc)).toBe(false);
+  });
+
+  // Multiple operators in single clause
+  it('multiple operators in single clause (gt + lt)', () => {
+    expect(whereChecker('age', { gt: 10, lt: 50 }, doc)).toBe(true);
+  });
+
+  it('multiple operators in single clause: fails when one does not match', () => {
+    expect(whereChecker('age', { gt: 10, lt: 25 }, doc)).toBe(false);
+  });
 });

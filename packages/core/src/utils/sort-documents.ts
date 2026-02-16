@@ -18,8 +18,7 @@ export function sortDocuments<T>(
       } else if (typeof va === 'string' && typeof vb === 'string') {
         cmp = va.localeCompare(vb);
       } else {
-        // fallback: coerce to number (handles timestamps, etc)
-        cmp = Number(va) - Number(vb);
+        cmp = 0; // unsupported or mismatched types — treat as equal
       }
 
       if (cmp !== 0) return dir === 'ASC' ? cmp : -cmp;

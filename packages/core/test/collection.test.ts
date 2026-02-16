@@ -635,6 +635,168 @@ describe('GraphDB', () => {
   });
 });
 
+// ─── Additional syncer tests ─────────────────────────────────────────────────
+
+describe('syncers — update throws', () => {
+  it('update syncer throws -> revert + throw', async () => {
+    const db = GraphDB();
+    db.createCollection<UserModel>('user', {
+      syncers: {
+        update: async () => { throw new Error('Network down'); },
+      },
+    });
+    const col = db.getCollection<UserModel>('user')!;
+    const id = await col.create({ name: 'Alex', lastName: 'Casillas', age: 29 });
+    try {
+      await col.update(id, { name: 'John' });
+    } catch {
+      // expected
+    }
+    const doc = col.read(id)!;
+    expect(doc.name).toBe('Alex');
+  });
+
+  it('remove syncer throws -> revert + throw', async () => {
+    const db = GraphDB();
+    db.createCollection<UserModel>('user', {
+      syncers: {
+        remove: async () => { throw new Error('Network down'); },
+      },
+    });
+    const col = db.getCollection<UserModel>('user')!;
+    const id = await col.create({ name: 'Alex', lastName: 'Casillas', age: 29 });
+    try {
+      await col.remove(id);
+    } catch {
+      // expected
+    }
+    expect(col.read(id)).not.toBeNull();
+  });
+
+  it('syncError event fires with correct op and docId for update failure', async () => {
+    const db = GraphDB();
+    db.createCollection<UserModel>('user', {
+      syncers: { update: async () => false },
+    });
+    const col = db.getCollection<UserModel>('user')!;
+    const id = await col.create({ name: 'Alex', lastName: 'Casillas', age: 29 });
+    let payload: any = null;
+    col.on('syncError', (p) => { payload = p; });
+    try { await col.update(id, { name: 'John' }); } catch { /* expected */ }
+    expect(payload).not.toBeNull();
+    expect(payload.op).toBe('update');
+    expect(payload.docId).toBe(id);
+  });
+
+  it('syncError event fires with correct op and docId for remove failure', async () => {
+    const db = GraphDB();
+    db.createCollection<UserModel>('user', {
+      syncers: { remove: async () => false },
+    });
+    const col = db.getCollection<UserModel>('user')!;
+    const id = await col.create({ name: 'Alex', lastName: 'Casillas', age: 29 });
+    let payload: any = null;
+    col.on('syncError', (p) => { payload = p; });
+    try { await col.remove(id); } catch { /* expected */ }
+    expect(payload).not.toBeNull();
+    expect(payload.op).toBe('remove');
+    expect(payload.docId).toBe(id);
+  });
+
+  it('after create-sync failure, exists returns false and count unchanged', async () => {
+    const db = GraphDB();
+    db.createCollection<UserModel>('user', {
+      syncers: { create: async () => false },
+    });
+    const col = db.getCollection<UserModel>('user')!;
+    const countBefore = col.count();
+    let createdId: string | undefined;
+    try {
+      createdId = await col.create({ name: 'Alex', lastName: 'Casillas', age: 29 });
+    } catch {
+      // expected
+    }
+    // The id was assigned optimistically but should be reverted
+    expect(col.count()).toBe(countBefore);
+    if (createdId) {
+      expect(col.exists(createdId)).toBe(false);
+    }
+  });
+});
+
+// ─── Additional listener tests ───────────────────────────────────────────────
+
+describe('listeners — edge cases', () => {
+  it('multiple listeners on same event all fire', async () => {
+    const db = GraphDB();
+    db.createCollection<UserModel>('user');
+    const col = db.getCollection<UserModel>('user')!;
+    let count1 = 0;
+    let count2 = 0;
+    col.on('create', () => { count1++; });
+    col.on('create', () => { count2++; });
+    await col.create({ name: 'Alex', lastName: 'Casillas', age: 29 });
+    expect(count1).toBe(1);
+    expect(count2).toBe(1);
+  });
+});
+
+// ─── Additional query tests ──────────────────────────────────────────────────
+
+describe('query — edge cases', () => {
+  it('limit: 0 returns empty array', () => {
+    const { col } = setupUsers();
+    const result = col.query({}, { limit: 0 });
+    expect(result.length).toBe(0);
+  });
+
+  it('orderBy with DESC', () => {
+    const { col } = setupUsers();
+    const result = col.query({}, { orderBy: { age: 'DESC' } });
+    expect(result[0].age).toBe(50);
+    expect(result[result.length - 1].age).toBe(19);
+  });
+});
+
+// ─── Additional count test ───────────────────────────────────────────────────
+
+describe('count — edge cases', () => {
+  it('count({}) (empty where) returns total same as no arg', () => {
+    const { col } = setupUsers();
+    expect(col.count({})).toBe(col.count());
+  });
+});
+
+// ─── Additional updateMany / removeMany tests ────────────────────────────────
+
+describe('updateMany — edge cases', () => {
+  it('returns empty array when no docs match', async () => {
+    const { col } = setupUsers();
+    const results = await col.updateMany({ name: 'Nobody' }, { age: 99 });
+    expect(results).toEqual([]);
+  });
+});
+
+describe('removeMany — edge cases', () => {
+  it('returns empty array when no docs match', async () => {
+    const { col } = setupUsers();
+    const results = await col.removeMany({ name: 'Nobody' });
+    expect(results).toEqual([]);
+  });
+});
+
+// ─── Additional clear test ───────────────────────────────────────────────────
+
+describe('clear — edge cases', () => {
+  it('after clear(), exists() returns false for previously-existing IDs', () => {
+    const { col } = setupUsers();
+    expect(col.exists('1')).toBe(true);
+    col.clear();
+    expect(col.exists('1')).toBe(false);
+    expect(col.exists('2')).toBe(false);
+  });
+});
+
 // ─── Indexing ────────────────────────────────────────────────────────────────
 
 describe('indexing', () => {
@@ -710,5 +872,37 @@ describe('indexing', () => {
     ] as Doc<UserModel>[]);
     const result = col.query({ age: { in: [10, 30] } });
     expect(result.length).toBe(2);
+  });
+
+  it('non-indexable operator on indexed field falls back to scan correctly', () => {
+    const db = GraphDB();
+    db.createCollection<UserModel>('user', { indexes: ['age'] });
+    const col = db.getCollection<UserModel>('user')!;
+    const now = Date.now();
+    col.populate([
+      { _id: '1', name: 'A', lastName: 'X', age: 10, createdAt: now, updatedAt: now },
+      { _id: '2', name: 'B', lastName: 'Y', age: 20, createdAt: now, updatedAt: now },
+      { _id: '3', name: 'C', lastName: 'Z', age: 30, createdAt: now, updatedAt: now },
+    ] as Doc<UserModel>[]);
+    // gt is not indexable — should fall back to full scan
+    const result = col.query({ age: { gt: 15 } });
+    expect(result.length).toBe(2);
+    expect(result.every(d => d.age > 15)).toBe(true);
+  });
+
+  it('mixed indexable + non-indexable clauses', () => {
+    const db = GraphDB();
+    db.createCollection<UserModel>('user', { indexes: ['name'] });
+    const col = db.getCollection<UserModel>('user')!;
+    const now = Date.now();
+    col.populate([
+      { _id: '1', name: 'Alex', lastName: 'Casillas', age: 29, createdAt: now, updatedAt: now },
+      { _id: '2', name: 'Alex', lastName: 'Other', age: 15, createdAt: now, updatedAt: now },
+      { _id: '3', name: 'John', lastName: 'Snow', age: 35, createdAt: now, updatedAt: now },
+    ] as Doc<UserModel>[]);
+    // name is indexed (equality), age gt is non-indexable — uses index for name, then scans candidates
+    const result = col.query({ name: 'Alex', age: { gt: 20 } });
+    expect(result.length).toBe(1);
+    expect(result[0]._id).toBe('1');
   });
 });

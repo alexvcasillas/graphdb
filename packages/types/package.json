@@ -31,7 +31,7 @@
     "build:esm": "bun build src/index.ts --outdir dist --format esm --target bun",
     "build:cjs": "bun build src/index.ts --outfile dist/index.cjs --format cjs --target bun",
     "build": "bun run clean && bun run build:types && bun run build:esm && bun run build:cjs",
-    "test": "bun test",
+    "test": "echo 'no tests (pure types package)'",
     "lint": "tsc -p tsconfig.json --noEmit"
   },
   "publishConfig": {

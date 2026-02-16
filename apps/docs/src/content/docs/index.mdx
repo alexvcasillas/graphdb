@@ -1,0 +1,39 @@
+---
+title: GraphDB
+description: An in-memory database with sync capabilities. Zero runtime deps. TypeScript-first.
+template: splash
+hero:
+  tagline: An in-memory database with sync capabilities. Zero runtime deps. TypeScript-first.
+  actions:
+    - text: Get Started
+      link: /getting-started/installation/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/alexvcasillas/graphdb
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid stagger>
+  <Card title="Zero Dependencies" icon="rocket">
+    No runtime dependencies. Uses built-in `crypto.randomUUID()` and `Date.now()`. Lightweight and fast.
+  </Card>
+  <Card title="TypeScript-First" icon="seti:typescript">
+    Full type safety with generics. `Doc<T>`, `Where<T>`, typed event payloads, and IDE autocompletion out of the box.
+  </Card>
+  <Card title="Query Engine" icon="magnifier">
+    Powerful where clauses with operators: `eq`, `gt`, `lt`, `includes`, `startsWith`, `match`, `in`, and more. RegExp support at top level.
+  </Card>
+  <Card title="Hash Indexes" icon="list-format">
+    Optional hash indexes for O(1) equality lookups. Accelerates `eq`, primitive equality, and `in` operators automatically.
+  </Card>
+  <Card title="Real-Time Listeners" icon="star">
+    Collection-level events (`create`, `update`, `remove`, `populate`, `syncError`) and per-document listeners with O(1) unsubscribe.
+  </Card>
+  <Card title="Backend Sync" icon="cloud">
+    Optimistic writes with automatic revert on sync failure. Plug in your own create/update/remove sync functions.
+  </Card>
+</CardGrid>

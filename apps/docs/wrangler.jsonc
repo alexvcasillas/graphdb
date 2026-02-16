@@ -1,0 +1,7 @@
+{
+  "name": "graphdb",
+  "compatibility_date": "2026-02-16",
+  "assets": {
+    "directory": "./dist"
+  }
+}

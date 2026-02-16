@@ -18,6 +18,9 @@
     "test": "bun --filter '*' test",
     "build": "bun run --filter @graphdb/types build && bun run --filter @graphdb/core build && bun run --filter @graphdb/docs build",
     "clean": "bun --filter '*' clean",
+    "docs:dev": "bun run --filter @graphdb/docs dev",
+    "docs:build": "bun run --filter @graphdb/docs build",
+    "docs:preview": "bun run --filter @graphdb/docs preview",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "changeset publish"

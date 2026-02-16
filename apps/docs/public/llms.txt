@@ -1,0 +1,54 @@
+# GraphDB
+
+> An in-memory database with sync capabilities. Zero runtime deps. TypeScript-first.
+
+GraphDB is a lightweight, TypeScript-first in-memory database that provides:
+- Collection-based document storage with auto-generated IDs and timestamps
+- Powerful query engine with where clauses, operators, sorting, and pagination
+- Optional hash indexes for O(1) equality lookups
+- Real-time listeners for collection events and per-document changes
+- Backend synchronization with optimistic writes and automatic revert on failure
+- Zero runtime dependencies
+
+## Install
+
+```bash
+bun add @graphdb/core
+```
+
+## Quick Example
+
+```typescript
+import { GraphDB } from '@graphdb/core';
+
+const db = GraphDB();
+db.createCollection<{ name: string; age: number }>('users', {
+  indexes: ['name'],
+});
+
+const users = db.getCollection<{ name: string; age: number }>('users')!;
+const id = await users.create({ name: 'Alex', age: 29 });
+const doc = users.read(id);
+
+// Query with operators
+const results = users.query({ age: { gt: 25 } });
+
+// Listen to changes
+const cancel = users.on('create', ({ doc }) => console.log('New:', doc));
+cancel(); // unsubscribe
+```
+
+## Key Concepts
+
+- **Doc<T>**: Every document gets `_id` (UUID), `createdAt`, and `updatedAt` (epoch ms)
+- **Where clauses**: Primitive equality, RegExp, or operator objects (eq, notEq, gt, gte, lt, lte, includes, startsWith, endsWith, match, in)
+- **Sync reads, async writes**: read/query/findOne are synchronous; create/update/remove are async (for syncer support)
+- **Syncers**: Optimistic writes that revert on sync failure
+- **Events**: create, update, remove, populate, syncError — all with typed payloads
+
+## Links
+
+- Documentation: https://graphdb.pages.dev
+- Full LLM context: https://graphdb.pages.dev/llms-full.txt
+- GitHub: https://github.com/alexvcasillas/graphdb
+- npm: https://www.npmjs.com/package/@graphdb/core

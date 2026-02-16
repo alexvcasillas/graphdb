@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 
 // Sidebar order for structured output
 const sectionOrder = [
@@ -30,9 +30,9 @@ const sectionOrder = [
 ];
 
 export const GET: APIRoute = async () => {
-  const docs = await getCollection('docs');
+  const docs: CollectionEntry<'docs'>[] = await getCollection('docs');
 
-  const docMap = new Map(docs.map((doc) => [doc.id, doc]));
+  const docMap = new Map(docs.map((doc: CollectionEntry<'docs'>) => [doc.id, doc]));
 
   const parts: string[] = [
     '# GraphDB — Full Documentation',
@@ -50,7 +50,7 @@ export const GET: APIRoute = async () => {
     const doc = docMap.get(slug);
     if (!doc) continue;
 
-    const title = doc.data.title;
+    const title = (doc.data as { title: string }).title;
     parts.push(`# ${title}`);
     parts.push('');
     parts.push(doc.body ?? '');
@@ -62,7 +62,7 @@ export const GET: APIRoute = async () => {
   // Append any docs not in the explicit order
   for (const doc of docs) {
     if (!sectionOrder.includes(doc.id)) {
-      parts.push(`# ${doc.data.title}`);
+      parts.push(`# ${(doc.data as { title: string }).title}`);
       parts.push('');
       parts.push(doc.body ?? '');
       parts.push('');
